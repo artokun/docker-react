@@ -1,9 +1,15 @@
 sudo: required
 services:
   - docker
-
 before_install:
+  - openssl aes-256-cbc -K $encrypted_72f6fe45c540_key -iv $encrypted_72f6fe45c540_iv
+    -in serviceAccount.json.enc -out serviceAccount.json -d
   - docker build -t alongbottom/docker-react -f Dockerfile.dev .
-
 script:
   - docker run alongbottom/docker-react npm run test -- --coverage
+
+deploy:
+  provider: gae
+  keyfile: serviceAccount.json.enc
+  project: docker-react-arl
+  skip_cleanup: true
